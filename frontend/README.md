@@ -34,11 +34,13 @@ A modern, responsive React frontend for the Qest fitness studio management syste
 ### Development
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -48,6 +50,7 @@ A modern, responsive React frontend for the Qest fitness studio management syste
 ### Production Build
 
 1. **Build the application**:
+
    ```bash
    npm run build
    ```
@@ -60,6 +63,7 @@ A modern, responsive React frontend for the Qest fitness studio management syste
 ### Docker Deployment
 
 1. **Build the Docker image**:
+
    ```bash
    docker build -t qest-frontend .
    ```
@@ -109,24 +113,28 @@ src/
 ## Key Features
 
 ### Dashboard
+
 - Studio metrics overview
 - Recent client and order activity
 - Quick action buttons
 - Responsive card layout
 
 ### Client Management
+
 - Complete client profiles
 - Search and filter functionality
 - CRUD operations with forms
 - Client details with order history
 
 ### Order Management
+
 - Service booking system
 - Status tracking with visual indicators
 - Order filtering and search
 - Client association
 
 ### AI Agent Chat
+
 - Specialized fitness AI agents:
   - Fitness Coach
   - Nutrition Expert
@@ -137,6 +145,7 @@ src/
 - Message history
 
 ### UI Components
+
 - Consistent design system
 - Accessible components
 - Loading states and error handling
@@ -173,6 +182,7 @@ The application is containerized using a multi-stage Docker build:
 2. **Production stage**: Serves static files via Nginx
 
 Key features:
+
 - Optimized nginx configuration
 - Client-side routing support
 - Gzip compression
@@ -189,17 +199,20 @@ For production deployment, configure these environment variables:
 ## Development Guidelines
 
 ### Code Style
+
 - Use functional components with hooks
 - Follow React best practices
 - Implement proper error boundaries
 - Use TypeScript for type safety (future enhancement)
 
 ### State Management
+
 - Use React Query for server state
 - Local state with useState for UI state
 - Custom hooks for reusable logic
 
 ### Component Structure
+
 - Keep components small and focused
 - Use composition over inheritance
 - Implement proper prop types
@@ -219,6 +232,7 @@ For production deployment, configure these environment variables:
 ## Support
 
 For support and questions:
+
 - Check the backend API documentation
 - Review the component documentation
 - Check browser console for errors

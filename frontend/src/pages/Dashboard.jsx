@@ -4,7 +4,6 @@ import {
   UsersIcon,
   ShoppingBagIcon,
   AcademicCapIcon,
-  ChartBarIcon,
   CalendarIcon,
   TrendingUpIcon,
 } from "@heroicons/react/24/outline";
