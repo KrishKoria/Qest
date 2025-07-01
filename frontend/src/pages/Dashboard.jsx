@@ -5,10 +5,10 @@ import {
   ShoppingBagIcon,
   AcademicCapIcon,
   CalendarIcon,
-  TrendingUpIcon,
 } from "@heroicons/react/24/outline";
 import { Card, LoadingPage } from "../components/ui";
 import { api } from "../services/api";
+import { TrendingUpIcon } from "lucide-react";
 
 const StatCard = ({
   title,

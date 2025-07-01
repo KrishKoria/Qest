@@ -8,11 +8,11 @@ import {
   PhoneIcon,
   CalendarIcon,
   ExclamationTriangleIcon,
-  TargetIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Button, LoadingPage } from "../components/ui";
 import { api } from "../services/api";
 import { formatDate } from "../utils";
+import { TargetIcon } from "lucide-react";
 
 const InfoCard = ({ title, children, icon: Icon }) => (
   <Card className="p-6">
