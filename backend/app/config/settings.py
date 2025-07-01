@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     
     # OpenAI Configuration (for CrewAI)
     openai_api_key: Optional[str] = None
-    openai_model: str = "gpt-3.5-turbo"
+    openai_model: str = "deepseek-chat"
     
     # External API Configuration (MISSING FIELDS - ADDING NOW)
     external_api_base_url: str = "https://api.example.com"

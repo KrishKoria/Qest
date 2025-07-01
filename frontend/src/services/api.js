@@ -36,151 +36,223 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       localStorage.removeItem("authToken");
-      window.location.href = "/login";
+      // Don't redirect to login if we don't have auth system
+      console.warn("Unauthorized access detected");
     }
     return Promise.reject(error);
   }
 );
 
-// API service functions
+// API service functions matching the actual backend endpoints
 export const api = {
   // Health check
   health: () => apiClient.get("/health"),
 
-  // Agent interactions
+  // Agent interactions - These are the actual backend endpoints
   agents: {
-    query: (query, agentType = "support") =>
-      apiClient.post("/agents/query", { query, agent_type: agentType }),
+    // Support agent queries
+    supportQuery: (query, language = "en", context = {}) =>
+      apiClient.post("/api/v1/support", { query, language, context }),
 
-    getAvailableAgents: () => apiClient.get("/agents/available"),
-
-    getAgentCapabilities: (agentType) =>
-      apiClient.get(`/agents/${agentType}/capabilities`),
+    // Dashboard agent queries
+    dashboardQuery: (query, language = "en", context = {}) =>
+      apiClient.post("/api/v1/dashboard", { query, language, context }),
   },
 
-  // Members management
-  members: {
-    getAll: (params = {}) => apiClient.get("/members", { params }),
-
-    getById: (id) => apiClient.get(`/members/${id}`),
-
-    create: (memberData) => apiClient.post("/members", memberData),
-
-    update: (id, memberData) => apiClient.put(`/members/${id}`, memberData),
-
-    delete: (id) => apiClient.delete(`/members/${id}`),
-
-    search: (query) =>
-      apiClient.get("/members/search", { params: { q: query } }),
-  },
-
-  // Classes management
-  classes: {
-    getAll: (params = {}) => apiClient.get("/classes", { params }),
-
-    getById: (id) => apiClient.get(`/classes/${id}`),
-
-    create: (classData) => apiClient.post("/classes", classData),
-
-    update: (id, classData) => apiClient.put(`/classes/${id}`, classData),
-
-    delete: (id) => apiClient.delete(`/classes/${id}`),
-
-    getUpcoming: () => apiClient.get("/classes/upcoming"),
-
-    getByInstructor: (instructorId) =>
-      apiClient.get(`/classes/instructor/${instructorId}`),
-  },
-
-  // Instructors management
-  instructors: {
-    getAll: (params = {}) => apiClient.get("/instructors", { params }),
-
-    getById: (id) => apiClient.get(`/instructors/${id}`),
-
-    create: (instructorData) => apiClient.post("/instructors", instructorData),
-
-    update: (id, instructorData) =>
-      apiClient.put(`/instructors/${id}`, instructorData),
-
-    delete: (id) => apiClient.delete(`/instructors/${id}`),
-
-    getSchedule: (id, params = {}) =>
-      apiClient.get(`/instructors/${id}/schedule`, { params }),
-  },
-
-  // Memberships management
-  memberships: {
-    getAll: (params = {}) => apiClient.get("/memberships", { params }),
-
-    getById: (id) => apiClient.get(`/memberships/${id}`),
-
-    create: (membershipData) => apiClient.post("/memberships", membershipData),
-
-    update: (id, membershipData) =>
-      apiClient.put(`/memberships/${id}`, membershipData),
-
-    delete: (id) => apiClient.delete(`/memberships/${id}`),
-
-    getActive: () => apiClient.get("/memberships/active"),
-
-    getExpiring: (days = 30) =>
-      apiClient.get("/memberships/expiring", { params: { days } }),
-  },
-
-  // Analytics and reporting
-  analytics: {
-    getDashboard: () => apiClient.get("/analytics/dashboard"),
-
-    getMembershipStats: (params = {}) =>
-      apiClient.get("/analytics/memberships", { params }),
-
-    getRevenueStats: (params = {}) =>
-      apiClient.get("/analytics/revenue", { params }),
-
-    getClassAttendance: (params = {}) =>
-      apiClient.get("/analytics/attendance", { params }),
-
-    getInstructorPerformance: (params = {}) =>
-      apiClient.get("/analytics/instructors", { params }),
-
-    getCustomReport: (reportType, params = {}) =>
-      apiClient.get(`/analytics/reports/${reportType}`, { params }),
-  },
-
-  // External integrations (if needed)
-  external: {
-    getWeather: () => apiClient.get("/external/weather"),
-
-    getHealthData: (params = {}) =>
-      apiClient.get("/external/health", { params }),
-  },
-
-  // File uploads
-  uploads: {
-    uploadFile: (file, type = "general") => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", type);
-
-      return apiClient.post("/uploads", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+  // Dashboard data - using agent queries to get data
+  dashboard: {
+    getStats: async () => {
+      // Get dashboard statistics using the dashboard agent
+      const response = await apiClient.post("/api/v1/dashboard", {
+        query:
+          "Give me a summary of studio statistics including total clients, active orders, available courses, and scheduled classes",
+        language: "en",
+        context: {},
       });
+      return response.data;
     },
 
-    uploadAvatar: (file, entityType, entityId) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("entity_type", entityType);
-      formData.append("entity_id", entityId);
-
-      return apiClient.post("/uploads/avatar", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    getRecentClients: async () => {
+      // Get recent clients using support agent
+      const response = await apiClient.post("/api/v1/support", {
+        query:
+          "Show me the 5 most recent clients with their names and email addresses",
+        language: "en",
+        context: {},
       });
+      return response.data;
+    },
+
+    getRecentOrders: async () => {
+      // Get recent orders using support agent
+      const response = await apiClient.post("/api/v1/support", {
+        query:
+          "Show me the 5 most recent orders with their status and total amount",
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+  },
+
+  // Data queries using agents
+  clients: {
+    getAll: async (searchQuery = "") => {
+      const query = searchQuery
+        ? `Find all clients matching: ${searchQuery}`
+        : "List all clients with their details";
+
+      const response = await apiClient.post("/api/v1/support", {
+        query,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getById: async (id) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Get details for client with ID: ${id}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    create: async (clientData) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Create a new client with details: ${JSON.stringify(
+          clientData
+        )}`,
+        language: "en",
+        context: { action: "create_client", data: clientData },
+      });
+      return response.data;
+    },
+
+    search: async (searchTerm) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Search for clients by name, email, or phone: ${searchTerm}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+  },
+
+  orders: {
+    getAll: async (filters = {}) => {
+      let query = "List all orders";
+      if (filters.status) {
+        query += ` with status: ${filters.status}`;
+      }
+      if (filters.clientId) {
+        query += ` for client ID: ${filters.clientId}`;
+      }
+
+      const response = await apiClient.post("/api/v1/support", {
+        query,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getById: async (id) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Get order details for order ID: ${id}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    create: async (orderData) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Create a new order with details: ${JSON.stringify(orderData)}`,
+        language: "en",
+        context: { action: "create_order", data: orderData },
+      });
+      return response.data;
+    },
+  },
+
+  courses: {
+    getAll: async () => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: "List all available courses with their details",
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getById: async (id) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Get course details for course ID: ${id}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+  },
+
+  classes: {
+    getAll: async (filters = {}) => {
+      let query = "List all scheduled classes";
+      if (filters.upcoming) {
+        query = "List upcoming classes this week";
+      }
+      if (filters.instructor) {
+        query += ` by instructor: ${filters.instructor}`;
+      }
+
+      const response = await apiClient.post("/api/v1/support", {
+        query,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getById: async (id) => {
+      const response = await apiClient.post("/api/v1/support", {
+        query: `Get class details for class ID: ${id}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+  },
+
+  // Analytics using dashboard agent
+  analytics: {
+    getRevenue: async (period = "month") => {
+      const response = await apiClient.post("/api/v1/dashboard", {
+        query: `Show revenue analytics for the current ${period}`,
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getClientInsights: async () => {
+      const response = await apiClient.post("/api/v1/dashboard", {
+        query:
+          "Give me client insights including active vs inactive clients and new clients this month",
+        language: "en",
+        context: {},
+      });
+      return response.data;
+    },
+
+    getAttendance: async () => {
+      const response = await apiClient.post("/api/v1/dashboard", {
+        query: "Show attendance analytics and class participation rates",
+        language: "en",
+        context: {},
+      });
+      return response.data;
     },
   },
 };

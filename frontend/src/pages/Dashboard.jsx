@@ -69,50 +69,59 @@ const StatCard = ({
 };
 
 const Dashboard = () => {
+  // Fetch dashboard statistics using the dashboard agent
   const {
-    data: dashboardData,
-    isLoading,
-    error,
+    data: dashboardStats,
+    isLoading: statsLoading,
+    error: statsError,
   } = useQuery({
-    queryKey: ["dashboard"],
-    queryFn: async () => {
-      // Since we don't have a specific dashboard endpoint, we'll fetch basic data
-      const [clients, orders, courses, classes] = await Promise.all([
-        api.get("/clients").catch(() => ({ data: [] })),
-        api.get("/orders").catch(() => ({ data: [] })),
-        api.get("/courses").catch(() => ({ data: [] })),
-        api.get("/classes").catch(() => ({ data: [] })),
-      ]);
-
-      return {
-        clients: clients.data || [],
-        orders: orders.data || [],
-        courses: courses.data || [],
-        classes: classes.data || [],
-      };
-    },
+    queryKey: ["dashboard-stats"],
+    queryFn: api.dashboard.getStats,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
   });
 
-  if (isLoading) {
+  // Fetch recent clients
+  const { data: recentClientsData, isLoading: clientsLoading } = useQuery({
+    queryKey: ["recent-clients"],
+    queryFn: api.dashboard.getRecentClients,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 1,
+  });
+
+  // Fetch recent orders
+  const { data: recentOrdersData, isLoading: ordersLoading } = useQuery({
+    queryKey: ["recent-orders"],
+    queryFn: api.dashboard.getRecentOrders,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 1,
+  });
+
+  if (statsLoading) {
     return <LoadingPage message="Loading dashboard..." />;
   }
 
-  if (error) {
+  if (statsError) {
     return (
       <div className="text-center py-12">
         <div className="text-red-600 text-lg font-semibold mb-2">
           Error loading dashboard
         </div>
-        <p className="text-gray-600">Please try refreshing the page</p>
+        <p className="text-gray-600 mb-4">
+          {statsError.message || "Please try refreshing the page"}
+        </p>
+        <p className="text-sm text-gray-500">
+          Make sure the backend is running and your OpenAI API key is configured
+        </p>
       </div>
     );
   }
 
+  // Default stats if agent response doesn't provide structured data
   const stats = [
     {
       title: "Total Clients",
-      value: dashboardData?.clients?.length || 0,
+      value: "---", // Will be populated by agent response
       icon: UsersIcon,
       color: "blue",
       trend: "up",
@@ -120,9 +129,7 @@ const Dashboard = () => {
     },
     {
       title: "Active Orders",
-      value:
-        dashboardData?.orders?.filter((order) => order.status === "active")
-          ?.length || 0,
+      value: "---", // Will be populated by agent response
       icon: ShoppingBagIcon,
       color: "green",
       trend: "up",
@@ -130,13 +137,13 @@ const Dashboard = () => {
     },
     {
       title: "Available Courses",
-      value: dashboardData?.courses?.length || 0,
+      value: "---", // Will be populated by agent response
       icon: AcademicCapIcon,
       color: "purple",
     },
     {
       title: "Scheduled Classes",
-      value: dashboardData?.classes?.length || 0,
+      value: "---", // Will be populated by agent response
       icon: CalendarIcon,
       color: "yellow",
       trend: "up",
@@ -160,6 +167,22 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Agent Response Display */}
+      {dashboardStats && (
+        <Card>
+          <Card.Header>
+            <Card.Title>Studio Statistics</Card.Title>
+          </Card.Header>
+          <Card.Content>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                {dashboardStats.response || "No statistics available"}
+              </p>
+            </div>
+          </Card.Content>
+        </Card>
+      )}
+
       {/* Recent Activity */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
@@ -167,28 +190,18 @@ const Dashboard = () => {
             <Card.Title>Recent Clients</Card.Title>
           </Card.Header>
           <Card.Content>
-            {dashboardData?.clients?.length > 0 ? (
-              <div className="space-y-3">
-                {dashboardData.clients.slice(0, 5).map((client, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
-                        {client.name?.charAt(0) || "C"}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {client.name || "Unknown Client"}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {client.email || "No email"}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+            {clientsLoading ? (
+              <div className="text-center py-4">
+                <p className="text-gray-500">Loading clients...</p>
+              </div>
+            ) : recentClientsData?.response ? (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {recentClientsData.response}
+                </p>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No clients yet</p>
+              <p className="text-sm text-gray-500">No recent clients data</p>
             )}
           </Card.Content>
         </Card>
@@ -198,29 +211,18 @@ const Dashboard = () => {
             <Card.Title>Recent Orders</Card.Title>
           </Card.Header>
           <Card.Content>
-            {dashboardData?.orders?.length > 0 ? (
-              <div className="space-y-3">
-                {dashboardData.orders.slice(0, 5).map((order, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        Order #{order.id || index + 1}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {order.status || "pending"}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 text-sm font-medium text-gray-900">
-                      ${order.total || "0.00"}
-                    </div>
-                  </div>
-                ))}
+            {ordersLoading ? (
+              <div className="text-center py-4">
+                <p className="text-gray-500">Loading orders...</p>
+              </div>
+            ) : recentOrdersData?.response ? (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {recentOrdersData.response}
+                </p>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No orders yet</p>
+              <p className="text-sm text-gray-500">No recent orders data</p>
             )}
           </Card.Content>
         </Card>
