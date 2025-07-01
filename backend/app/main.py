@@ -68,10 +68,15 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=[
+        "*"  # Allow all origins for development (remove in production)
+    ],
     allow_credentials=True,
-    allow_methods=settings.allowed_methods,
-    allow_headers=settings.allowed_headers,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=[
+        "*",
+    ],
+    expose_headers=["*"],
 )
 
 # Include API routes
@@ -108,8 +113,21 @@ async def support_query(request: QueryRequest):
             language=request.language
         )
         
+    except ValueError as e:
+        # Handle configuration errors (like missing API key)
+        logger.error(f"Configuration error: {str(e)}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Configuration error: {str(e)}"
+        )
     except Exception as e:
         logger.error(f"Support query error: {str(e)}")
+        # Check if it's an OpenAI API error
+        if "openai" in str(e).lower() or "api" in str(e).lower():
+            raise HTTPException(
+                status_code=500, 
+                detail="OpenAI API error. Please check your API key and try again."
+            )
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -133,8 +151,21 @@ async def dashboard_query(request: QueryRequest):
             language=request.language
         )
         
+    except ValueError as e:
+        # Handle configuration errors (like missing API key)
+        logger.error(f"Configuration error: {str(e)}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Configuration error: {str(e)}"
+        )
     except Exception as e:
         logger.error(f"Dashboard query error: {str(e)}")
+        # Check if it's an OpenAI API error
+        if "openai" in str(e).lower() or "api" in str(e).lower():
+            raise HTTPException(
+                status_code=500, 
+                detail="OpenAI API error. Please check your API key and try again."
+            )
         raise HTTPException(status_code=500, detail=str(e))
 
 

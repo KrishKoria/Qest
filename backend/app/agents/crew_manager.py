@@ -23,14 +23,16 @@ class CrewManager:
         settings = get_settings()
         
         # Validate OpenAI API key
-        if not settings.openai_api_key or settings.openai_api_key == "sk-your-openai-api-key-here":
+        if not settings.openai_api_key or settings.openai_api_key == "sk-your-actual-openai-api-key-here":
             raise ValueError(
-                "AI_API_Key is required. Please set AI_API_KEY in your .env file. "
+                "OPENAI_API_KEY is required. Please set OPENAI_API_KEY in your .env file. "
+                "Get your API key from https://platform.openai.com/api-keys"
             )
         
         self.llm = LLM(
             model=settings.openai_model,
             api_key=settings.openai_api_key,
+            base_url="https://api.deepseek.com"
         )
         # Initialize agents
         self.support_agent = self._create_support_agent()

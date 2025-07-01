@@ -42,11 +42,6 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     
-    # CORS
-    allowed_origins: list = ["http://localhost:3000", "http://localhost:8080"]
-    allowed_methods: list = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    allowed_headers: list = ["*"]
-    
     model_config = ConfigDict(
         env_file=".env",
         case_sensitive=False,
