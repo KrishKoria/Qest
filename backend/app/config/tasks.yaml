@@ -1,0 +1,77 @@
+# Task configurations for the fitness studio agents
+
+support_tasks:
+  client_inquiry_task:
+    description: >
+      Handle client inquiries about courses, classes, schedules, and general information.
+      Search for specific information requested by the client and provide comprehensive, 
+      helpful responses. If the client needs to book something or make changes, assist 
+      them through the process.
+    expected_output: >
+      A detailed, friendly response that fully addresses the client's inquiry with 
+      specific information from the database. Include relevant details such as schedules, 
+      pricing, instructor information, and next steps if applicable.
+
+  order_status_task:
+    description: >
+      Check and provide detailed information about client orders including payment status, 
+      service details, and any pending items. Help resolve any order-related issues.
+    expected_output: >
+      Complete order information including order ID, service details, payment status, 
+      amounts, dates, and any relevant notes. If there are issues, provide clear 
+      explanation and next steps.
+
+  payment_inquiry_task:
+    description: >
+      Handle payment-related inquiries including payment history, outstanding balances, 
+      payment methods, and payment processing issues.
+    expected_output: >
+      Detailed payment information including transaction history, current balance, 
+      payment methods on file, and clear explanation of any outstanding amounts or issues.
+
+  service_booking_task:
+    description: >
+      Help clients discover and book appropriate courses or classes based on their needs, 
+      preferences, and schedule. Create new orders when requested.
+    expected_output: >
+      Personalized service recommendations with detailed information about recommended 
+      courses/classes, booking confirmation if order is created, and clear next steps 
+      for the client.
+
+dashboard_tasks:
+  revenue_analysis_task:
+    description: >
+      Generate comprehensive revenue analytics including total revenue, outstanding payments, 
+      revenue by service type, and financial trends. Provide insights and recommendations 
+      based on the data.
+    expected_output: >
+      Detailed revenue report with total figures, breakdowns by service type, trend analysis, 
+      outstanding payment summary, and actionable business insights with recommendations 
+      for revenue optimization.
+
+  client_insights_task:
+    description: >
+      Analyze client data to provide insights on client status, new registrations, 
+      birthday reminders, activity levels, and client lifecycle management.
+    expected_output: >
+      Comprehensive client analytics report including active/inactive client counts, 
+      new client acquisition data, birthday reminders for the month, client engagement 
+      metrics, and recommendations for client retention strategies.
+
+  service_performance_task:
+    description: >
+      Analyze service performance including enrollment trends, popular courses/classes, 
+      completion rates, and instructor performance metrics.
+    expected_output: >
+      Detailed service performance report showing enrollment statistics, top-performing 
+      services, completion rate analysis, instructor metrics, and recommendations for 
+      service optimization and development.
+
+  attendance_monitoring_task:
+    description: >
+      Generate attendance reports and analytics including attendance percentages by class, 
+      drop-off rates, attendance trends, and class utilization metrics.
+    expected_output: >
+      Comprehensive attendance analysis with class-by-class breakdown, overall attendance 
+      percentages, trend identification, utilization rates, and recommendations for 
+      improving attendance and reducing drop-offs.
