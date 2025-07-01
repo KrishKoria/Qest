@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   # MongoDB Database
   mongodb:
-    image: mongo:7.0
+    image: mongo:8.0
     container_name: fitness_studio_mongodb
     restart: unless-stopped
     environment:
@@ -20,7 +18,7 @@ services:
 
   # Redis for caching and memory
   redis:
-    image: redis:7.2-alpine
+    image: redis:8.0
     container_name: fitness_studio_redis
     restart: unless-stopped
     ports:
@@ -38,6 +36,7 @@ services:
       dockerfile: Dockerfile
     container_name: fitness_studio_backend
     restart: unless-stopped
+    env_file: ./backend/.env
     environment:
       - MONGODB_URL=mongodb://admin:password123@mongodb:27017/fitness_studio?authSource=admin
       - DATABASE_NAME=fitness_studio
@@ -65,6 +64,7 @@ services:
     container_name: fitness_studio_frontend
     restart: unless-stopped
     working_dir: /app
+    env_file: ./frontend/.env
     environment:
       - REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
     ports:

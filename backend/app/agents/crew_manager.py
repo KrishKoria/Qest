@@ -1,11 +1,11 @@
-from crewai import Agent, Crew, Task, Process
+from crewai import Agent, Crew, Task, Process, LLM
 from crewai.project import CrewBase, agent, crew, task
 import yaml
 import os
 from typing import Dict, Any, Optional
 import logging
 from langdetect import detect
-
+from ..config.settings import get_settings
 from ..tools.mongodb_tool import MongoDBTool
 from ..tools.external_api_tool import ExternalAPITool
 
@@ -20,7 +20,11 @@ class CrewManager:
         self.agents_config = self._load_config()
         self.mongodb_tool = MongoDBTool()
         self.external_api_tool = ExternalAPITool()
-        
+        settings = get_settings()
+        self.llm = LLM(
+            model=settings.openai_model,
+            api_key=settings.openai_api_key,
+        )
         # Initialize agents
         self.support_agent = self._create_support_agent()
         self.dashboard_agent = self._create_dashboard_agent()
@@ -49,7 +53,8 @@ class CrewManager:
             allow_delegation=config.get('allow_delegation', False),
             max_iter=config.get('max_iter', 25),
             memory=config.get('memory', True),
-            tools=[self.mongodb_tool, self.external_api_tool]
+            tools=[self.mongodb_tool, self.external_api_tool],
+            llm=self.llm
         )
     
     def _create_dashboard_agent(self) -> Agent:
@@ -64,7 +69,8 @@ class CrewManager:
             allow_delegation=config.get('allow_delegation', False),
             max_iter=config.get('max_iter', 20),
             memory=config.get('memory', True),
-            tools=[self.mongodb_tool]  # Dashboard agent only needs read access
+            tools=[self.mongodb_tool],  # Dashboard agent only needs read access
+            llm=self.llm
         )
     
     def _detect_language(self, text: str) -> str:

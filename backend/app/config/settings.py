@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # OpenAI Configuration (for CrewAI)
     openai_api_key: Optional[str] = None
-    openai_model: str = "gpt-4"
+    openai_model: str = "deepseek-chat"
     
     # Crew Configuration
     crew_verbose: bool = True
