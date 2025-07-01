@@ -4,18 +4,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
-import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import Clients from "./pages/Clients";
-import ClientDetails from "./pages/ClientDetails";
-import Orders from "./pages/Orders";
-import OrderDetails from "./pages/OrderDetails";
-import Courses from "./pages/Courses";
-import Classes from "./pages/Classes";
-import Analytics from "./pages/Analytics";
-import AgentChat from "./pages/AgentChat";
-import Support from "./pages/Support";
-import NotFound from "./pages/NotFound";
+import { Layout } from "./components";
+import { 
+  Dashboard, 
+  Clients, 
+  ClientDetails, 
+  Orders, 
+  Courses, 
+  Classes, 
+  Analytics, 
+  AgentChat, 
+  Support, 
+  NotFound 
+} from "./pages";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +42,6 @@ function App() {
 
               {/* Order Management */}
               <Route path="orders" element={<Orders />} />
-              <Route path="orders/:id" element={<OrderDetails />} />
 
               {/* Course & Class Management */}
               <Route path="courses" element={<Courses />} />
@@ -51,7 +51,7 @@ function App() {
               <Route path="analytics" element={<Analytics />} />
 
               {/* AI Agent */}
-              <Route path="agent" element={<AgentChat />} />
+              <Route path="agent-chat" element={<AgentChat />} />
 
               {/* Support */}
               <Route path="support" element={<Support />} />

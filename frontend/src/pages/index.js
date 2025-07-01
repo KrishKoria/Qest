@@ -1,0 +1,10 @@
+export { default as Dashboard } from './Dashboard';
+export { default as Clients } from './Clients';
+export { default as ClientDetails } from './ClientDetails';
+export { default as Orders } from './Orders';
+export { default as Courses } from './Courses';
+export { default as Classes } from './Classes';
+export { default as Analytics } from './Analytics';
+export { default as AgentChat } from './AgentChat';
+export { default as Support } from './Support';
+export { default as NotFound } from './NotFound';
