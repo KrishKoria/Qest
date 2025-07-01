@@ -32,7 +32,6 @@ class CrewManager:
         self.llm = LLM(
             model=settings.openai_model,
             api_key=settings.openai_api_key,
-            base_url="https://api.deepseek.com"
         )
         # Initialize agents
         self.support_agent = self._create_support_agent()

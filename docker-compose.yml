@@ -46,6 +46,7 @@ services:
       - DEBUG=true
       - LOG_LEVEL=INFO
       - SECRET_KEY=${SECRET_KEY:-your_secret_key_change_in_production}
+      # - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
     ports:
       - "8000:8000"
     depends_on:
@@ -53,6 +54,7 @@ services:
       - redis
     volumes:
       - ./backend:/app
+      - ./backend/credentials.json:/app/credentials.json:ro
     networks:
       - fitness_studio_network
 
