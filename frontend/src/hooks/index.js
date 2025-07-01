@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { api, handleApiError } from '../services/api';
+import { useState, useEffect, useCallback } from "react";
+import { api, handleApiError } from "../services/api";
 
 /**
  * Custom hook for API calls with loading, error, and data state
@@ -13,21 +13,24 @@ export function useApi(apiCall, initialData = null, immediate = true) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const execute = useCallback(async (...args) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await apiCall(...args);
-      setData(response.data);
-      return response.data;
-    } catch (err) {
-      const errorInfo = handleApiError(err);
-      setError(errorInfo);
-      throw errorInfo;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiCall]);
+  const execute = useCallback(
+    async (...args) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await apiCall(...args);
+        setData(response.data);
+        return response.data;
+      } catch (err) {
+        const errorInfo = handleApiError(err);
+        setError(errorInfo);
+        throw errorInfo;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiCall]
+  );
 
   const reset = useCallback(() => {
     setData(initialData);
@@ -56,51 +59,57 @@ export function useForm(initialValues = {}, validationSchema = null) {
   const [touched, setTouchedState] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const setValue = useCallback((name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }));
-    }
-  }, [errors]);
+  const setValue = useCallback(
+    (name, value) => {
+      setValues((prev) => ({ ...prev, [name]: value }));
+
+      // Clear error when user starts typing
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
+      }
+    },
+    [errors]
+  );
 
   const setTouched = useCallback((name) => {
-    setTouchedState(prev => ({ ...prev, [name]: true }));
+    setTouchedState((prev) => ({ ...prev, [name]: true }));
   }, []);
 
   const validate = useCallback(() => {
     if (!validationSchema) return true;
-    
+
     const validationErrors = validationSchema(values);
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   }, [values, validationSchema]);
 
-  const handleSubmit = useCallback((onSubmit) => {
-    return async (e) => {
-      if (e) e.preventDefault();
-      
-      setIsSubmitting(true);
-      
-      // Mark all fields as touched
-      const allTouched = Object.keys(values).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {});
-      setTouchedState(allTouched);
+  const handleSubmit = useCallback(
+    (onSubmit) => {
+      return async (e) => {
+        if (e) e.preventDefault();
 
-      if (validate()) {
-        try {
-          await onSubmit(values);
-        } catch (error) {
-          console.error('Form submission error:', error);
+        setIsSubmitting(true);
+
+        // Mark all fields as touched
+        const allTouched = Object.keys(values).reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {});
+        setTouchedState(allTouched);
+
+        if (validate()) {
+          try {
+            await onSubmit(values);
+          } catch (error) {
+            console.error("Form submission error:", error);
+          }
         }
-      }
-      
-      setIsSubmitting(false);
-    };
-  }, [values, validate]);
+
+        setIsSubmitting(false);
+      };
+    },
+    [values, validate]
+  );
 
   const reset = useCallback(() => {
     setValues(initialValues);
@@ -161,15 +170,19 @@ export function useLocalStorage(key, initialValue) {
     }
   });
 
-  const setValue = useCallback((value) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+  const setValue = useCallback(
+    (value) => {
+      try {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
+        setStoredValue(valueToStore);
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (error) {
+        console.error(`Error setting localStorage key "${key}":`, error);
+      }
+    },
+    [key, storedValue]
+  );
 
   return [storedValue, setValue];
 }
@@ -184,7 +197,7 @@ export function useModal(initialOpen = false) {
 
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
-  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
+  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
   return { isOpen, open, close, toggle };
 }
@@ -202,7 +215,7 @@ export function useAsync() {
 
   const execute = useCallback(async (asyncFunction) => {
     setState({ data: null, loading: true, error: null });
-    
+
     try {
       const data = await asyncFunction();
       setState({ data, loading: false, error: null });
@@ -235,19 +248,22 @@ export function usePagination(initialPage = 1, pageSize = 10) {
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
-  const goToPage = useCallback((page) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  }, [totalPages]);
+  const goToPage = useCallback(
+    (page) => {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    },
+    [totalPages]
+  );
 
   const nextPage = useCallback(() => {
     if (hasNextPage) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   }, [hasNextPage]);
 
   const prevPage = useCallback(() => {
     if (hasPrevPage) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   }, [hasPrevPage]);
 
@@ -277,7 +293,7 @@ export function usePagination(initialPage = 1, pageSize = 10) {
  * @returns {object} Search state and handlers
  */
 export function useSearch(searchFunction, debounceDelay = 300) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -310,7 +326,7 @@ export function useSearch(searchFunction, debounceDelay = 300) {
   }, [debouncedQuery, searchFunction]);
 
   const clearSearch = useCallback(() => {
-    setQuery('');
+    setQuery("");
     setResults([]);
     setError(null);
   }, []);
@@ -343,10 +359,10 @@ export function useWindowSize() {
       });
     }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize();
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return windowSize;
@@ -367,9 +383,9 @@ export function useMediaQuery(query) {
     }
 
     const listener = () => setMatches(media.matches);
-    media.addEventListener('change', listener);
+    media.addEventListener("change", listener);
 
-    return () => media.removeEventListener('change', listener);
+    return () => media.removeEventListener("change", listener);
   }, [matches, query]);
 
   return matches;
@@ -386,12 +402,12 @@ export function useOnlineStatus() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 

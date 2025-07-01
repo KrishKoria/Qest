@@ -1,5 +1,5 @@
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Utility function to merge Tailwind CSS classes with clsx
@@ -16,9 +16,9 @@ export function cn(...inputs) {
  * @param {string} currency - Currency code (default: USD)
  * @returns {string} Formatted currency string
  */
-export function formatCurrency(amount, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+export function formatCurrency(amount, currency = "USD") {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency,
   }).format(amount);
 }
@@ -31,14 +31,15 @@ export function formatCurrency(amount, currency = 'USD') {
  */
 export function formatDate(date, options = {}) {
   const defaultOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   };
-  
-  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(
-    new Date(date)
-  );
+
+  return new Intl.DateTimeFormat("en-US", {
+    ...defaultOptions,
+    ...options,
+  }).format(new Date(date));
 }
 
 /**
@@ -49,14 +50,15 @@ export function formatDate(date, options = {}) {
  */
 export function formatTime(date, options = {}) {
   const defaultOptions = {
-    hour: 'numeric',
-    minute: '2-digit',
+    hour: "numeric",
+    minute: "2-digit",
     hour12: true,
   };
-  
-  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(
-    new Date(date)
-  );
+
+  return new Intl.DateTimeFormat("en-US", {
+    ...defaultOptions,
+    ...options,
+  }).format(new Date(date));
 }
 
 /**
@@ -67,17 +69,18 @@ export function formatTime(date, options = {}) {
  */
 export function formatDateTime(date, options = {}) {
   const defaultOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     hour12: true,
   };
-  
-  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(
-    new Date(date)
-  );
+
+  return new Intl.DateTimeFormat("en-US", {
+    ...defaultOptions,
+    ...options,
+  }).format(new Date(date));
 }
 
 /**
@@ -90,13 +93,13 @@ export function getRelativeTime(date) {
   const targetDate = new Date(date);
   const diffInMs = targetDate - now;
   const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-  
-  if (diffInDays === 0) return 'Today';
-  if (diffInDays === 1) return 'Tomorrow';
-  if (diffInDays === -1) return 'Yesterday';
+
+  if (diffInDays === 0) return "Today";
+  if (diffInDays === 1) return "Tomorrow";
+  if (diffInDays === -1) return "Yesterday";
   if (diffInDays > 1) return `In ${diffInDays} days`;
   if (diffInDays < -1) return `${Math.abs(diffInDays)} days ago`;
-  
+
   return formatDate(date);
 }
 
@@ -117,8 +120,9 @@ export function capitalize(str) {
  */
 export function toTitleCase(str) {
   if (!str) return str;
-  return str.replace(/\w\S*/g, (txt) => 
-    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  return str.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   );
 }
 
@@ -130,7 +134,7 @@ export function toTitleCase(str) {
  */
 export function truncateText(text, maxLength = 100) {
   if (!text || text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + '...';
+  return text.substring(0, maxLength).trim() + "...";
 }
 
 /**
@@ -139,8 +143,9 @@ export function truncateText(text, maxLength = 100) {
  * @returns {string} Random ID
  */
 export function generateId(length = 8) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -185,9 +190,9 @@ export function throttle(func, delay) {
  */
 export function isEmpty(value) {
   if (value === null || value === undefined) return true;
-  if (typeof value === 'string') return value.trim().length === 0;
+  if (typeof value === "string") return value.trim().length === 0;
   if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === 'object') return Object.keys(value).length === 0;
+  if (typeof value === "object") return Object.keys(value).length === 0;
   return false;
 }
 
@@ -197,10 +202,10 @@ export function isEmpty(value) {
  * @returns {any} Cloned object
  */
 export function deepClone(obj) {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== "object") return obj;
   if (obj instanceof Date) return new Date(obj.getTime());
-  if (obj instanceof Array) return obj.map(item => deepClone(item));
-  if (typeof obj === 'object') {
+  if (obj instanceof Array) return obj.map((item) => deepClone(item));
+  if (typeof obj === "object") {
     const clonedObj = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
@@ -217,7 +222,7 @@ export function deepClone(obj) {
  * @returns {Promise} Promise that resolves after delay
  */
 export function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -228,17 +233,20 @@ export function sleep(ms) {
  */
 export function getAvatarUrl(name, url = null) {
   if (url) return url;
-  
+
   // Generate a simple avatar based on initials
-  const initials = name
-    ?.split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2) || 'NA';
-  
+  const initials =
+    name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2) || "NA";
+
   // Using a simple placeholder service
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=3b82f6&color=fff&size=128`;
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    initials
+  )}&background=3b82f6&color=fff&size=128`;
 }
 
 /**
@@ -258,7 +266,7 @@ export function isValidEmail(email) {
  */
 export function isValidPhone(phone) {
   const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-  return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+  return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
 }
 
 /**
@@ -267,7 +275,7 @@ export function isValidPhone(phone) {
  * @returns {string} Formatted phone
  */
 export function formatPhone(phone) {
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
   if (match) {
     return `(${match[1]}) ${match[2]}-${match[3]}`;
@@ -282,17 +290,17 @@ export function formatPhone(phone) {
  */
 export function getStatusColor(status) {
   const statusColors = {
-    active: 'success',
-    inactive: 'danger',
-    pending: 'warning',
-    completed: 'success',
-    cancelled: 'danger',
-    scheduled: 'primary',
-    expired: 'danger',
-    expiring: 'warning',
+    active: "success",
+    inactive: "danger",
+    pending: "warning",
+    completed: "success",
+    cancelled: "danger",
+    scheduled: "primary",
+    expired: "danger",
+    expiring: "warning",
   };
-  
-  return statusColors[status?.toLowerCase()] || 'primary';
+
+  return statusColors[status?.toLowerCase()] || "primary";
 }
 
 /**
@@ -302,7 +310,7 @@ export function getStatusColor(status) {
  */
 export function downloadFile(blob, filename) {
   const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);
@@ -322,15 +330,15 @@ export async function copyToClipboard(text) {
     return true;
   } catch (err) {
     // Fallback for older browsers
-    const textArea = document.createElement('textarea');
+    const textArea = document.createElement("textarea");
     textArea.value = text;
     document.body.appendChild(textArea);
     textArea.select();
     try {
-      document.execCommand('copy');
+      document.execCommand("copy");
       return true;
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
       return false;
     } finally {
       document.body.removeChild(textArea);

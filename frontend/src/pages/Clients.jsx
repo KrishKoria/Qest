@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import { 
-  PlusIcon, 
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import {
+  PlusIcon,
   MagnifyingGlassIcon,
   EyeIcon,
   PencilIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import { Card, Button, Input, Table, Modal, LoadingPage } from '../components/ui';
-import { api } from '../services/api';
-import { useDebounce } from '../hooks';
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Card,
+  Button,
+  Input,
+  Table,
+  Modal,
+  LoadingPage,
+} from "../components/ui";
+import { api } from "../services/api";
+import { useDebounce } from "../hooks";
 
 const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: client?.name || '',
-    email: client?.email || '',
-    phone: client?.phone || '',
-    date_of_birth: client?.date_of_birth || '',
-    emergency_contact: client?.emergency_contact || '',
-    medical_conditions: client?.medical_conditions || '',
-    fitness_goals: client?.fitness_goals || '',
-    ...client
+    name: client?.name || "",
+    email: client?.email || "",
+    phone: client?.phone || "",
+    date_of_birth: client?.date_of_birth || "",
+    emergency_contact: client?.emergency_contact || "",
+    medical_conditions: client?.medical_conditions || "",
+    fitness_goals: client?.fitness_goals || "",
+    ...client,
   });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -37,7 +44,12 @@ const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={client ? 'Edit Client' : 'Add New Client'} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={client ? "Edit Client" : "Add New Client"}
+      size="lg"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
@@ -69,14 +81,14 @@ const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
             onChange={handleChange}
           />
         </div>
-        
+
         <Input
           label="Emergency Contact"
           name="emergency_contact"
           value={formData.emergency_contact}
           onChange={handleChange}
         />
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,7 +103,7 @@ const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
               onChange={handleChange}
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Fitness Goals
@@ -112,7 +124,7 @@ const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
             Cancel
           </Button>
           <Button type="submit">
-            {client ? 'Update Client' : 'Add Client'}
+            {client ? "Update Client" : "Add Client"}
           </Button>
         </div>
       </form>
@@ -121,35 +133,40 @@ const ClientForm = ({ client, isOpen, onClose, onSubmit }) => {
 };
 
 const Clients = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const queryClient = useQueryClient();
 
-  const { data: clients = [], isLoading, error } = useQuery({
-    queryKey: ['clients', debouncedSearchTerm],
+  const {
+    data: clients = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["clients", debouncedSearchTerm],
     queryFn: async () => {
-      const response = await api.get('/clients', {
-        params: debouncedSearchTerm ? { search: debouncedSearchTerm } : {}
+      const response = await api.get("/clients", {
+        params: debouncedSearchTerm ? { search: debouncedSearchTerm } : {},
       });
       return response.data;
     },
   });
 
   const createClientMutation = useMutation({
-    mutationFn: (clientData) => api.post('/clients', clientData),
+    mutationFn: (clientData) => api.post("/clients", clientData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       setIsModalOpen(false);
       setEditingClient(null);
     },
   });
 
   const updateClientMutation = useMutation({
-    mutationFn: ({ id, ...clientData }) => api.put(`/clients/${id}`, clientData),
+    mutationFn: ({ id, ...clientData }) =>
+      api.put(`/clients/${id}`, clientData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       setIsModalOpen(false);
       setEditingClient(null);
     },
@@ -158,7 +175,7 @@ const Clients = () => {
   const deleteClientMutation = useMutation({
     mutationFn: (clientId) => api.delete(`/clients/${clientId}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -173,7 +190,7 @@ const Clients = () => {
   };
 
   const handleDeleteClient = async (clientId) => {
-    if (window.confirm('Are you sure you want to delete this client?')) {
+    if (window.confirm("Are you sure you want to delete this client?")) {
       deleteClientMutation.mutate(clientId);
     }
   };
@@ -188,27 +205,27 @@ const Clients = () => {
 
   const columns = [
     {
-      header: 'Name',
-      accessor: 'name',
+      header: "Name",
+      accessor: "name",
     },
     {
-      header: 'Email',
-      accessor: 'email',
+      header: "Email",
+      accessor: "email",
     },
     {
-      header: 'Phone',
-      accessor: 'phone',
+      header: "Phone",
+      accessor: "phone",
     },
     {
-      header: 'Fitness Goals',
+      header: "Fitness Goals",
       cell: (client) => (
         <div className="max-w-xs truncate">
-          {client.fitness_goals || 'Not specified'}
+          {client.fitness_goals || "Not specified"}
         </div>
       ),
     },
     {
-      header: 'Actions',
+      header: "Actions",
       cell: (client) => (
         <div className="flex space-x-2">
           <Link
@@ -241,7 +258,9 @@ const Clients = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 text-lg font-semibold mb-2">Error loading clients</div>
+        <div className="text-red-600 text-lg font-semibold mb-2">
+          Error loading clients
+        </div>
         <p className="text-gray-600">Please try refreshing the page</p>
       </div>
     );

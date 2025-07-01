@@ -1,18 +1,18 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { 
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import {
   ArrowLeftIcon,
   UserIcon,
   EnvelopeIcon,
   PhoneIcon,
   CalendarIcon,
   ExclamationTriangleIcon,
-  TargetIcon
-} from '@heroicons/react/24/outline';
-import { Card, Button, LoadingPage } from '../components/ui';
-import { api } from '../services/api';
-import { formatDate } from '../utils';
+  TargetIcon,
+} from "@heroicons/react/24/outline";
+import { Card, Button, LoadingPage } from "../components/ui";
+import { api } from "../services/api";
+import { formatDate } from "../utils";
 
 const InfoCard = ({ title, children, icon: Icon }) => (
   <Card className="p-6">
@@ -27,8 +27,12 @@ const InfoCard = ({ title, children, icon: Icon }) => (
 const ClientDetails = () => {
   const { id } = useParams();
 
-  const { data: client, isLoading, error } = useQuery({
-    queryKey: ['client', id],
+  const {
+    data: client,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["client", id],
     queryFn: async () => {
       const response = await api.get(`/clients/${id}`);
       return response.data;
@@ -37,7 +41,7 @@ const ClientDetails = () => {
   });
 
   const { data: orders = [] } = useQuery({
-    queryKey: ['client-orders', id],
+    queryKey: ["client-orders", id],
     queryFn: async () => {
       const response = await api.get(`/clients/${id}/orders`);
       return response.data;
@@ -46,7 +50,7 @@ const ClientDetails = () => {
   });
 
   const { data: classes = [] } = useQuery({
-    queryKey: ['client-classes', id],
+    queryKey: ["client-classes", id],
     queryFn: async () => {
       const response = await api.get(`/clients/${id}/classes`);
       return response.data;
@@ -61,9 +65,16 @@ const ClientDetails = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 text-lg font-semibold mb-2">Error loading client</div>
-        <p className="text-gray-600">Client not found or unable to load details</p>
-        <Link to="/clients" className="mt-4 inline-block text-blue-600 hover:text-blue-500">
+        <div className="text-red-600 text-lg font-semibold mb-2">
+          Error loading client
+        </div>
+        <p className="text-gray-600">
+          Client not found or unable to load details
+        </p>
+        <Link
+          to="/clients"
+          className="mt-4 inline-block text-blue-600 hover:text-blue-500"
+        >
           Back to Clients
         </Link>
       </div>
@@ -74,7 +85,10 @@ const ClientDetails = () => {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">Client not found</p>
-        <Link to="/clients" className="mt-4 inline-block text-blue-600 hover:text-blue-500">
+        <Link
+          to="/clients"
+          className="mt-4 inline-block text-blue-600 hover:text-blue-500"
+        >
           Back to Clients
         </Link>
       </div>
@@ -117,24 +131,36 @@ const ClientDetails = () => {
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">Phone</dt>
-                <dd className="mt-1 text-sm text-gray-900">{client.phone || 'Not provided'}</dd>
+                <dd className="mt-1 text-sm text-gray-900">
+                  {client.phone || "Not provided"}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Date of Birth
+                </dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {client.date_of_birth ? formatDate(client.date_of_birth) : 'Not provided'}
+                  {client.date_of_birth
+                    ? formatDate(client.date_of_birth)
+                    : "Not provided"}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Emergency Contact</dt>
-                <dd className="mt-1 text-sm text-gray-900">{client.emergency_contact || 'Not provided'}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Emergency Contact
+                </dt>
+                <dd className="mt-1 text-sm text-gray-900">
+                  {client.emergency_contact || "Not provided"}
+                </dd>
               </div>
             </div>
           </InfoCard>
 
           {client.medical_conditions && (
             <InfoCard title="Medical Conditions" icon={ExclamationTriangleIcon}>
-              <p className="text-sm text-gray-900">{client.medical_conditions}</p>
+              <p className="text-sm text-gray-900">
+                {client.medical_conditions}
+              </p>
             </InfoCard>
           )}
 
@@ -149,19 +175,31 @@ const ClientDetails = () => {
             {orders.length > 0 ? (
               <div className="space-y-3">
                 {orders.slice(0, 5).map((order, index) => (
-                  <div key={index} className="flex items-center justify-between border-b border-gray-200 pb-2">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between border-b border-gray-200 pb-2"
+                  >
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Order #{order.id}</p>
-                      <p className="text-sm text-gray-500">{formatDate(order.created_at)}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Order #{order.id}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(order.created_at)}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">${order.total || '0.00'}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        ${order.total || "0.00"}
+                      </p>
                       <p className="text-sm text-gray-500">{order.status}</p>
                     </div>
                   </div>
                 ))}
                 {orders.length > 5 && (
-                  <Link to={`/clients/${id}/orders`} className="text-sm text-blue-600 hover:text-blue-500">
+                  <Link
+                    to={`/clients/${id}/orders`}
+                    className="text-sm text-blue-600 hover:text-blue-500"
+                  >
                     View all orders ({orders.length})
                   </Link>
                 )}
@@ -175,27 +213,43 @@ const ClientDetails = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Stats</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Quick Stats
+            </h3>
             <div className="space-y-4">
               <div>
-                <dt className="text-sm font-medium text-gray-500">Total Orders</dt>
-                <dd className="mt-1 text-2xl font-semibold text-gray-900">{orders.length}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Total Orders
+                </dt>
+                <dd className="mt-1 text-2xl font-semibold text-gray-900">
+                  {orders.length}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Classes Attended</dt>
-                <dd className="mt-1 text-2xl font-semibold text-gray-900">{classes.length}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Classes Attended
+                </dt>
+                <dd className="mt-1 text-2xl font-semibold text-gray-900">
+                  {classes.length}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Member Since</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Member Since
+                </dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {client.created_at ? formatDate(client.created_at) : 'Unknown'}
+                  {client.created_at
+                    ? formatDate(client.created_at)
+                    : "Unknown"}
                 </dd>
               </div>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Quick Actions
+            </h3>
             <div className="space-y-3">
               <Button className="w-full" variant="outline">
                 <EnvelopeIcon className="h-4 w-4 mr-2" />
@@ -214,13 +268,22 @@ const ClientDetails = () => {
 
           {/* Upcoming Classes */}
           <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Upcoming Classes</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Upcoming Classes
+            </h3>
             {classes.length > 0 ? (
               <div className="space-y-3">
                 {classes.slice(0, 3).map((classItem, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
-                    <p className="text-sm font-medium text-gray-900">{classItem.name}</p>
-                    <p className="text-sm text-gray-500">{formatDate(classItem.date)}</p>
+                  <div
+                    key={index}
+                    className="border-b border-gray-200 pb-2 last:border-b-0"
+                  >
+                    <p className="text-sm font-medium text-gray-900">
+                      {classItem.name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {formatDate(classItem.date)}
+                    </p>
                   </div>
                 ))}
               </div>

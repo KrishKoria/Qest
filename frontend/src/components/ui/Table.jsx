@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const Table = ({ columns = [], data = [], className = '', ...props }) => {
+const Table = ({ columns = [], data = [], className = "", ...props }) => {
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-      <table className={`min-w-full divide-y divide-gray-300 ${className}`} {...props}>
+      <table
+        className={`min-w-full divide-y divide-gray-300 ${className}`}
+        {...props}
+      >
         <thead className="bg-gray-50">
           <tr>
             {columns.map((column, index) => (
@@ -20,8 +23,8 @@ const Table = ({ columns = [], data = [], className = '', ...props }) => {
         <tbody className="bg-white divide-y divide-gray-200">
           {data.length === 0 ? (
             <tr>
-              <td 
-                colSpan={columns.length} 
+              <td
+                colSpan={columns.length}
                 className="px-6 py-4 text-center text-sm text-gray-500"
               >
                 No data available
@@ -35,7 +38,9 @@ const Table = ({ columns = [], data = [], className = '', ...props }) => {
                     key={colIndex}
                     className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                   >
-                    {column.accessor ? row[column.accessor] : column.cell?.(row, rowIndex)}
+                    {column.accessor
+                      ? row[column.accessor]
+                      : column.cell?.(row, rowIndex)}
                   </td>
                 ))}
               </tr>

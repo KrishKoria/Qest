@@ -1,27 +1,35 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import { 
-  PlusIcon, 
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import {
+  PlusIcon,
   MagnifyingGlassIcon,
   EyeIcon,
   PencilIcon,
   TrashIcon,
   CheckCircleIcon,
   XCircleIcon,
-  ClockIcon
-} from '@heroicons/react/24/outline';
-import { Card, Button, Input, Table, Modal, Select, LoadingPage } from '../components/ui';
-import { api } from '../services/api';
-import { useDebounce } from '../hooks';
-import { formatDate, formatCurrency } from '../utils';
+  ClockIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Card,
+  Button,
+  Input,
+  Table,
+  Modal,
+  Select,
+  LoadingPage,
+} from "../components/ui";
+import { api } from "../services/api";
+import { useDebounce } from "../hooks";
+import { formatDate, formatCurrency } from "../utils";
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  active: 'bg-green-100 text-green-800',
-  completed: 'bg-gray-100 text-gray-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending: "bg-yellow-100 text-yellow-800",
+  confirmed: "bg-blue-100 text-blue-800",
+  active: "bg-green-100 text-green-800",
+  completed: "bg-gray-100 text-gray-800",
+  cancelled: "bg-red-100 text-red-800",
 };
 
 const statusIcons = {
@@ -35,7 +43,9 @@ const statusIcons = {
 const StatusBadge = ({ status }) => {
   const Icon = statusIcons[status] || ClockIcon;
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status]}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status]}`}
+    >
       <Icon className="w-3 h-3 mr-1" />
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
@@ -44,20 +54,20 @@ const StatusBadge = ({ status }) => {
 
 const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    client_id: order?.client_id || '',
-    service_type: order?.service_type || '',
-    description: order?.description || '',
-    total: order?.total || '',
-    status: order?.status || 'pending',
-    scheduled_date: order?.scheduled_date || '',
-    notes: order?.notes || '',
-    ...order
+    client_id: order?.client_id || "",
+    service_type: order?.service_type || "",
+    description: order?.description || "",
+    total: order?.total || "",
+    status: order?.status || "pending",
+    scheduled_date: order?.scheduled_date || "",
+    notes: order?.notes || "",
+    ...order,
   });
 
   const { data: clients = [] } = useQuery({
-    queryKey: ['clients'],
+    queryKey: ["clients"],
     queryFn: async () => {
-      const response = await api.get('/clients');
+      const response = await api.get("/clients");
       return response.data;
     },
   });
@@ -65,7 +75,7 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -75,23 +85,28 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
   };
 
   const serviceTypes = [
-    { value: 'personal_training', label: 'Personal Training' },
-    { value: 'group_class', label: 'Group Class' },
-    { value: 'nutrition_consultation', label: 'Nutrition Consultation' },
-    { value: 'fitness_assessment', label: 'Fitness Assessment' },
-    { value: 'program_design', label: 'Program Design' },
+    { value: "personal_training", label: "Personal Training" },
+    { value: "group_class", label: "Group Class" },
+    { value: "nutrition_consultation", label: "Nutrition Consultation" },
+    { value: "fitness_assessment", label: "Fitness Assessment" },
+    { value: "program_design", label: "Program Design" },
   ];
 
   const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'active', label: 'Active' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' },
+    { value: "pending", label: "Pending" },
+    { value: "confirmed", label: "Confirmed" },
+    { value: "active", label: "Active" },
+    { value: "completed", label: "Completed" },
+    { value: "cancelled", label: "Cancelled" },
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={order ? 'Edit Order' : 'Create New Order'} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={order ? "Edit Order" : "Create New Order"}
+      size="lg"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select
@@ -99,7 +114,10 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
             name="client_id"
             value={formData.client_id}
             onChange={handleChange}
-            options={clients.map(client => ({ value: client.id, label: client.name }))}
+            options={clients.map((client) => ({
+              value: client.id,
+              label: client.name,
+            }))}
             required
           />
           <Select
@@ -135,7 +153,7 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
             onChange={handleChange}
           />
         </div>
-        
+
         <Input
           label="Description"
           name="description"
@@ -143,7 +161,7 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
           onChange={handleChange}
           placeholder="Brief description of the service..."
         />
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Notes
@@ -163,7 +181,7 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
             Cancel
           </Button>
           <Button type="submit">
-            {order ? 'Update Order' : 'Create Order'}
+            {order ? "Update Order" : "Create Order"}
           </Button>
         </div>
       </form>
@@ -172,37 +190,41 @@ const OrderForm = ({ order, isOpen, onClose, onSubmit }) => {
 };
 
 const Orders = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const queryClient = useQueryClient();
 
-  const { data: orders = [], isLoading, error } = useQuery({
-    queryKey: ['orders', debouncedSearchTerm, statusFilter],
+  const {
+    data: orders = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["orders", debouncedSearchTerm, statusFilter],
     queryFn: async () => {
       const params = {};
       if (debouncedSearchTerm) params.search = debouncedSearchTerm;
       if (statusFilter) params.status = statusFilter;
-      
-      const response = await api.get('/orders', { params });
+
+      const response = await api.get("/orders", { params });
       return response.data;
     },
   });
 
   const { data: clients = [] } = useQuery({
-    queryKey: ['clients'],
+    queryKey: ["clients"],
     queryFn: async () => {
-      const response = await api.get('/clients');
+      const response = await api.get("/clients");
       return response.data;
     },
   });
 
   const createOrderMutation = useMutation({
-    mutationFn: (orderData) => api.post('/orders', orderData),
+    mutationFn: (orderData) => api.post("/orders", orderData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
       setIsModalOpen(false);
       setEditingOrder(null);
     },
@@ -211,7 +233,7 @@ const Orders = () => {
   const updateOrderMutation = useMutation({
     mutationFn: ({ id, ...orderData }) => api.put(`/orders/${id}`, orderData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
       setIsModalOpen(false);
       setEditingOrder(null);
     },
@@ -220,7 +242,7 @@ const Orders = () => {
   const deleteOrderMutation = useMutation({
     mutationFn: (orderId) => api.delete(`/orders/${orderId}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 
@@ -235,7 +257,7 @@ const Orders = () => {
   };
 
   const handleDeleteOrder = async (orderId) => {
-    if (window.confirm('Are you sure you want to delete this order?')) {
+    if (window.confirm("Are you sure you want to delete this order?")) {
       deleteOrderMutation.mutate(orderId);
     }
   };
@@ -249,42 +271,48 @@ const Orders = () => {
   };
 
   const getClientName = (clientId) => {
-    const client = clients.find(c => c.id === clientId);
-    return client ? client.name : 'Unknown Client';
+    const client = clients.find((c) => c.id === clientId);
+    return client ? client.name : "Unknown Client";
   };
 
   const columns = [
     {
-      header: 'Order ID',
-      accessor: 'id',
+      header: "Order ID",
+      accessor: "id",
       cell: (order) => `#${order.id}`,
     },
     {
-      header: 'Client',
+      header: "Client",
       cell: (order) => getClientName(order.client_id),
     },
     {
-      header: 'Service',
-      accessor: 'service_type',
-      cell: (order) => order.service_type?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'N/A',
+      header: "Service",
+      accessor: "service_type",
+      cell: (order) =>
+        order.service_type
+          ?.replace("_", " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase()) || "N/A",
     },
     {
-      header: 'Total',
-      accessor: 'total',
+      header: "Total",
+      accessor: "total",
       cell: (order) => formatCurrency(order.total),
     },
     {
-      header: 'Status',
-      accessor: 'status',
+      header: "Status",
+      accessor: "status",
       cell: (order) => <StatusBadge status={order.status} />,
     },
     {
-      header: 'Scheduled Date',
-      accessor: 'scheduled_date',
-      cell: (order) => order.scheduled_date ? formatDate(order.scheduled_date) : 'Not scheduled',
+      header: "Scheduled Date",
+      accessor: "scheduled_date",
+      cell: (order) =>
+        order.scheduled_date
+          ? formatDate(order.scheduled_date)
+          : "Not scheduled",
     },
     {
-      header: 'Actions',
+      header: "Actions",
       cell: (order) => (
         <div className="flex space-x-2">
           <Link
@@ -311,12 +339,12 @@ const Orders = () => {
   ];
 
   const statusOptions = [
-    { value: '', label: 'All Statuses' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'active', label: 'Active' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' },
+    { value: "", label: "All Statuses" },
+    { value: "pending", label: "Pending" },
+    { value: "confirmed", label: "Confirmed" },
+    { value: "active", label: "Active" },
+    { value: "completed", label: "Completed" },
+    { value: "cancelled", label: "Cancelled" },
   ];
 
   if (isLoading) {
@@ -326,7 +354,9 @@ const Orders = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 text-lg font-semibold mb-2">Error loading orders</div>
+        <div className="text-red-600 text-lg font-semibold mb-2">
+          Error loading orders
+        </div>
         <p className="text-gray-600">Please try refreshing the page</p>
       </div>
     );

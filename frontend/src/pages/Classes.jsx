@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card } from '../components/ui';
-import { CalendarIcon, PlusIcon } from '@heroicons/react/24/outline';
+import React from "react";
+import { Card } from "../components/ui";
+import { CalendarIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 const Classes = () => {
   return (

@@ -1,23 +1,30 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { 
-  UsersIcon, 
-  ShoppingBagIcon, 
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  UsersIcon,
+  ShoppingBagIcon,
   AcademicCapIcon,
   ChartBarIcon,
   CalendarIcon,
-  TrendingUpIcon
-} from '@heroicons/react/24/outline';
-import { Card, LoadingPage } from '../components/ui';
-import { api } from '../services/api';
+  TrendingUpIcon,
+} from "@heroicons/react/24/outline";
+import { Card, LoadingPage } from "../components/ui";
+import { api } from "../services/api";
 
-const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'blue' }) => {
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  trendValue,
+  color = "blue",
+}) => {
   const colorClasses = {
-    blue: 'text-blue-600 bg-blue-100',
-    green: 'text-green-600 bg-green-100',
-    yellow: 'text-yellow-600 bg-yellow-100',
-    purple: 'text-purple-600 bg-purple-100',
-    red: 'text-red-600 bg-red-100',
+    blue: "text-blue-600 bg-blue-100",
+    green: "text-green-600 bg-green-100",
+    yellow: "text-yellow-600 bg-yellow-100",
+    purple: "text-purple-600 bg-purple-100",
+    red: "text-red-600 bg-red-100",
   };
 
   return (
@@ -38,14 +45,18 @@ const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'blue' 
                 {value}
               </div>
               {trend && trendValue && (
-                <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                  trend === 'up' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  <TrendingUpIcon className={`self-center flex-shrink-0 h-4 w-4 ${
-                    trend === 'down' ? 'rotate-180' : ''
-                  }`} />
+                <div
+                  className={`ml-2 flex items-baseline text-sm font-semibold ${
+                    trend === "up" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  <TrendingUpIcon
+                    className={`self-center flex-shrink-0 h-4 w-4 ${
+                      trend === "down" ? "rotate-180" : ""
+                    }`}
+                  />
                   <span className="sr-only">
-                    {trend === 'up' ? 'Increased' : 'Decreased'} by
+                    {trend === "up" ? "Increased" : "Decreased"} by
                   </span>
                   {trendValue}
                 </div>
@@ -59,15 +70,19 @@ const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'blue' 
 };
 
 const Dashboard = () => {
-  const { data: dashboardData, isLoading, error } = useQuery({
-    queryKey: ['dashboard'],
+  const {
+    data: dashboardData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["dashboard"],
     queryFn: async () => {
       // Since we don't have a specific dashboard endpoint, we'll fetch basic data
       const [clients, orders, courses, classes] = await Promise.all([
-        api.get('/clients').catch(() => ({ data: [] })),
-        api.get('/orders').catch(() => ({ data: [] })),
-        api.get('/courses').catch(() => ({ data: [] })),
-        api.get('/classes').catch(() => ({ data: [] })),
+        api.get("/clients").catch(() => ({ data: [] })),
+        api.get("/orders").catch(() => ({ data: [] })),
+        api.get("/courses").catch(() => ({ data: [] })),
+        api.get("/classes").catch(() => ({ data: [] })),
       ]);
 
       return {
@@ -87,7 +102,9 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 text-lg font-semibold mb-2">Error loading dashboard</div>
+        <div className="text-red-600 text-lg font-semibold mb-2">
+          Error loading dashboard
+        </div>
         <p className="text-gray-600">Please try refreshing the page</p>
       </div>
     );
@@ -95,34 +112,36 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: 'Total Clients',
+      title: "Total Clients",
       value: dashboardData?.clients?.length || 0,
       icon: UsersIcon,
-      color: 'blue',
-      trend: 'up',
-      trendValue: '12%',
+      color: "blue",
+      trend: "up",
+      trendValue: "12%",
     },
     {
-      title: 'Active Orders',
-      value: dashboardData?.orders?.filter(order => order.status === 'active')?.length || 0,
+      title: "Active Orders",
+      value:
+        dashboardData?.orders?.filter((order) => order.status === "active")
+          ?.length || 0,
       icon: ShoppingBagIcon,
-      color: 'green',
-      trend: 'up',
-      trendValue: '8%',
+      color: "green",
+      trend: "up",
+      trendValue: "8%",
     },
     {
-      title: 'Available Courses',
+      title: "Available Courses",
       value: dashboardData?.courses?.length || 0,
       icon: AcademicCapIcon,
-      color: 'purple',
+      color: "purple",
     },
     {
-      title: 'Scheduled Classes',
+      title: "Scheduled Classes",
       value: dashboardData?.classes?.length || 0,
       icon: CalendarIcon,
-      color: 'yellow',
-      trend: 'up',
-      trendValue: '4%',
+      color: "yellow",
+      trend: "up",
+      trendValue: "4%",
     },
   ];
 
@@ -155,15 +174,15 @@ const Dashboard = () => {
                   <div key={index} className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-gray-600">
-                        {client.name?.charAt(0) || 'C'}
+                        {client.name?.charAt(0) || "C"}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {client.name || 'Unknown Client'}
+                        {client.name || "Unknown Client"}
                       </p>
                       <p className="text-sm text-gray-500 truncate">
-                        {client.email || 'No email'}
+                        {client.email || "No email"}
                       </p>
                     </div>
                   </div>
@@ -183,17 +202,20 @@ const Dashboard = () => {
             {dashboardData?.orders?.length > 0 ? (
               <div className="space-y-3">
                 {dashboardData.orders.slice(0, 5).map((order, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">
                         Order #{order.id || index + 1}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {order.status || 'pending'}
+                        {order.status || "pending"}
                       </p>
                     </div>
                     <div className="flex-shrink-0 text-sm font-medium text-gray-900">
-                      ${order.total || '0.00'}
+                      ${order.total || "0.00"}
                     </div>
                   </div>
                 ))}
@@ -214,19 +236,27 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <button className="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
               <UsersIcon className="h-6 w-6 text-blue-600 mr-3" />
-              <span className="text-sm font-medium text-blue-900">Add Client</span>
+              <span className="text-sm font-medium text-blue-900">
+                Add Client
+              </span>
             </button>
             <button className="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
               <ShoppingBagIcon className="h-6 w-6 text-green-600 mr-3" />
-              <span className="text-sm font-medium text-green-900">Create Order</span>
+              <span className="text-sm font-medium text-green-900">
+                Create Order
+              </span>
             </button>
             <button className="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
               <AcademicCapIcon className="h-6 w-6 text-purple-600 mr-3" />
-              <span className="text-sm font-medium text-purple-900">Add Course</span>
+              <span className="text-sm font-medium text-purple-900">
+                Add Course
+              </span>
             </button>
             <button className="flex items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors">
               <CalendarIcon className="h-6 w-6 text-yellow-600 mr-3" />
-              <span className="text-sm font-medium text-yellow-900">Schedule Class</span>
+              <span className="text-sm font-medium text-yellow-900">
+                Schedule Class
+              </span>
             </button>
           </div>
         </Card.Content>
