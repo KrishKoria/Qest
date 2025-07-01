@@ -8,29 +8,20 @@ pydantic-settings
 # CrewAI and AI Dependencies
 crewai
 crewai-tools
-langchain
-langchain-openai
 openai
 
 # Database
 pymongo
 motor
 
-# Bonus Features
+# Language Detection and Utilities
 langdetect
-sentence-transformers
-redis
-numpy
-scikit-learn
-
-# Utilities
 python-dateutil
 email-validator
+
+# Security
 python-jose[cryptography]
 passlib[bcrypt]
 
-# Development
-pytest
-pytest-asyncio
-black
-isort
+# Redis for caching
+redis

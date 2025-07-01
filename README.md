@@ -5,10 +5,12 @@ A comprehensive AI-powered customer support and business analytics system for fi
 ## 🌟 Features
 
 ### 🤖 AI Agents
+
 - **Support Agent**: Handles customer queries about courses, orders, payments, and bookings
 - **Dashboard Agent**: Provides business analytics, metrics, and insights
 
 ### 🛠️ Core Capabilities
+
 - **Natural Language Processing**: Understands queries in multiple languages
 - **MongoDB Integration**: Efficient data storage and retrieval
 - **External API Integration**: Seamless creation of clients and orders
@@ -16,6 +18,7 @@ A comprehensive AI-powered customer support and business analytics system for fi
 - **Memory & Context**: Agents remember conversation context
 
 ### 📊 Data Management
+
 - Client management and enrollment tracking
 - Order and payment processing
 - Course and class scheduling
@@ -41,6 +44,7 @@ backend/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.8+
 - MongoDB 4.4+
 - OpenAI API key (for CrewAI)
@@ -48,34 +52,40 @@ backend/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/fitness-studio-agents.git
    cd fitness-studio-agents/backend
    ```
 
 2. **Create virtual environment**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Environment setup**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 5. **Start MongoDB**
+
    ```bash
    mongod
    ```
 
 6. **Generate sample data**
+
    ```bash
    python -m app.utils.sample_data
    ```
@@ -97,7 +107,8 @@ MONGODB_URL=mongodb://localhost:27017
 DATABASE_NAME=fitness_studio
 
 # OpenAI Configuration (for CrewAI)
-OPENAI_API_KEY=your_openai_api_key_here
+# Get your API key from https://platform.openai.com/api-keys
+OPENAI_API_KEY=sk-your-openai-api-key-here
 
 # External API Configuration
 EXTERNAL_API_BASE_URL=https://api.example.com
@@ -133,6 +144,7 @@ dashboard_agent:
 ### Agent Interactions
 
 #### Support Agent
+
 ```http
 POST /api/v1/support
 Content-Type: application/json
@@ -145,6 +157,7 @@ Content-Type: application/json
 ```
 
 #### Dashboard Agent
+
 ```http
 POST /api/v1/dashboard
 Content-Type: application/json
@@ -159,19 +172,23 @@ Content-Type: application/json
 ### Data Management
 
 #### Clients
+
 - `GET /api/v1/clients` - List clients
 - `GET /api/v1/clients/{id}` - Get client by ID
 - `POST /api/v1/clients` - Create new client
 
 #### Orders
+
 - `GET /api/v1/orders` - List orders
 - `POST /api/v1/orders` - Create new order
 
 #### Courses & Classes
+
 - `GET /api/v1/courses` - List courses
 - `GET /api/v1/classes` - List classes
 
 #### Analytics
+
 - `GET /api/v1/analytics/revenue` - Revenue metrics
 - `GET /api/v1/analytics/clients` - Client analytics
 
@@ -214,6 +231,7 @@ Content-Type: application/json
 ### Collections
 
 #### Clients
+
 ```javascript
 {
   "_id": ObjectId,
@@ -229,6 +247,7 @@ Content-Type: application/json
 ```
 
 #### Orders
+
 ```javascript
 {
   "_id": ObjectId,
@@ -244,6 +263,7 @@ Content-Type: application/json
 ```
 
 #### Courses
+
 ```javascript
 {
   "_id": ObjectId,
@@ -258,6 +278,7 @@ Content-Type: application/json
 ```
 
 #### Classes
+
 ```javascript
 {
   "_id": ObjectId,
@@ -281,6 +302,7 @@ python -m app.utils.sample_data
 ```
 
 This creates:
+
 - 50 sample clients
 - 6 courses with multiple classes
 - 100+ orders with payments
@@ -303,6 +325,7 @@ curl -X POST "http://localhost:8000/api/v1/dashboard" \
 ## 🌟 Bonus Features
 
 ### Multilingual Support
+
 The system automatically detects query language and responds appropriately:
 
 ```python
@@ -317,6 +340,7 @@ The system automatically detects query language and responds appropriately:
 ```
 
 ### Memory & Context
+
 Agents remember conversation context:
 
 ```python
@@ -328,6 +352,7 @@ Agents remember conversation context:
 ```
 
 ### RAG (Retrieval-Augmented Generation)
+
 Smart querying with context from the knowledge base for more accurate responses.
 
 ## 🔒 Security
@@ -353,6 +378,7 @@ Smart querying with context from the knowledge base for more accurate responses.
 The easiest way to run the entire system is using Docker Compose:
 
 1. **Clone and setup**
+
    ```bash
    git clone https://github.com/yourusername/fitness-studio-agents.git
    cd fitness-studio-agents
@@ -361,11 +387,13 @@ The easiest way to run the entire system is using Docker Compose:
    ```
 
 2. **Start all services**
+
    ```bash
    docker-compose up -d
    ```
 
 3. **Generate sample data**
+
    ```bash
    docker-compose exec backend python -m app.utils.sample_data
    ```
@@ -378,11 +406,13 @@ The easiest way to run the entire system is using Docker Compose:
 ### Docker Compose Services
 
 #### Core Services (always running)
+
 - **backend**: FastAPI application with CrewAI agents
 - **mongodb**: MongoDB database with pre-configured collections
 - **redis**: Redis for caching and agent memory
 
 #### Optional Services
+
 - **frontend**: React frontend (use `--profile frontend`)
 - **mongo-express**: Database management UI (use `--profile tools`)
 
@@ -460,6 +490,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🆘 Support
 
 For support and questions:
+
 - Create an issue on GitHub
 - Check the documentation
 - Review the example queries

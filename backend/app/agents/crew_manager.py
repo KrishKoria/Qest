@@ -21,6 +21,13 @@ class CrewManager:
         self.mongodb_tool = MongoDBTool()
         self.external_api_tool = ExternalAPITool()
         settings = get_settings()
+        
+        # Validate OpenAI API key
+        if not settings.openai_api_key or settings.openai_api_key == "sk-your-openai-api-key-here":
+            raise ValueError(
+                "AI_API_Key is required. Please set AI_API_KEY in your .env file. "
+            )
+        
         self.llm = LLM(
             model=settings.openai_model,
             api_key=settings.openai_api_key,
