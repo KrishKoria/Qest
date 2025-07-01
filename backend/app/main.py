@@ -9,9 +9,13 @@ from .models.database import DatabaseManager, create_indexes
 from .models.schemas import QueryRequest, QueryResponse, ErrorResponse, CreateClientRequest, CreateOrderRequest
 from .agents.crew_manager import CrewManager
 from .api.routes import router
+from .config.settings import get_settings
 
 # Load environment variables
 load_dotenv()
+
+# Get settings
+settings = get_settings()
 
 # Configure logging
 logging.basicConfig(
@@ -55,19 +59,19 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Fitness Studio Agent System",
-    description="AI-powered customer support and business analytics for fitness studios",
-    version="1.0.0",
+    title=settings.api_title,
+    description=settings.api_description,
+    version=settings.api_version,
     lifespan=lifespan
 )
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Frontend origins
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=settings.allowed_methods,
+    allow_headers=settings.allowed_headers,
 )
 
 # Include API routes

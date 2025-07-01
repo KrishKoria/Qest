@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import Optional
 import os
 
@@ -20,7 +21,14 @@ class Settings(BaseSettings):
     
     # OpenAI Configuration (for CrewAI)
     openai_api_key: Optional[str] = None
-    openai_model: str = "deepseek-chat"
+    openai_model: str = "gpt-3.5-turbo"
+    
+    # External API Configuration (MISSING FIELDS - ADDING NOW)
+    external_api_base_url: str = "https://api.example.com"
+    external_api_key: str = "your_external_api_key_here"
+    
+    # Application Configuration (MISSING FIELD - ADDING NOW)
+    debug: bool = True
     
     # Crew Configuration
     crew_verbose: bool = True
@@ -39,14 +47,15 @@ class Settings(BaseSettings):
     allowed_methods: list = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allowed_headers: list = ["*"]
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore"  # This allows extra environment variables to be ignored
+    )
 
 
 # Global settings instance
 settings = Settings()
-
 
 def get_settings() -> Settings:
     """Get application settings."""

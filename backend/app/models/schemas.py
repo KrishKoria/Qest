@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import core_schema
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -7,8 +9,10 @@ from bson import ObjectId
 
 class PyObjectId(ObjectId):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler
+    ) -> core_schema.CoreSchema:
+        return core_schema.no_info_plain_validator_function(cls.validate)
 
     @classmethod
     def validate(cls, v):
@@ -17,8 +21,10 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
     @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
+    def __get_pydantic_json_schema__(
+        cls, core_schema: core_schema.CoreSchema, handler
+    ) -> JsonSchemaValue:
+        return {"type": "string"}
 
 
 class ClientStatus(str, Enum):
@@ -53,7 +59,7 @@ class Client(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
-    phone: str = Field(..., regex=r"^\+?[1-9]\d{1,14}$")
+    phone: str = Field(..., pattern=r"^\+?[1-9]\d{1,14}$")
     status: ClientStatus = ClientStatus.ACTIVE
     enrolled_services: List[str] = Field(default_factory=list)
     registration_date: datetime = Field(default_factory=datetime.utcnow)
@@ -63,10 +69,11 @@ class Client(BaseModel):
     emergency_contact: Optional[Dict[str, str]] = None
     notes: Optional[str] = None
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # Order Models
@@ -85,10 +92,11 @@ class Order(BaseModel):
     tax_amount: Optional[float] = 0.0
     notes: Optional[str] = None
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # Payment Models
@@ -103,10 +111,11 @@ class Payment(BaseModel):
     gateway_response: Optional[Dict[str, Any]] = None
     notes: Optional[str] = None
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # Course Models
@@ -126,10 +135,11 @@ class Course(BaseModel):
     is_active: bool = True
     created_date: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # Class Models
@@ -148,10 +158,11 @@ class Class(BaseModel):
     cancellation_reason: Optional[str] = None
     notes: Optional[str] = None
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # Attendance Models
@@ -165,10 +176,11 @@ class Attendance(BaseModel):
     checked_out_time: Optional[datetime] = None
     notes: Optional[str] = None
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 
 # API Request/Response Models
@@ -194,7 +206,7 @@ class ErrorResponse(BaseModel):
 class CreateClientRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
-    phone: str = Field(..., regex=r"^\+?[1-9]\d{1,14}$")
+    phone: str = Field(..., pattern=r"^\+?[1-9]\d{1,14}$")
     birthday: Optional[datetime] = None
     address: Optional[str] = None
     emergency_contact: Optional[Dict[str, str]] = None
